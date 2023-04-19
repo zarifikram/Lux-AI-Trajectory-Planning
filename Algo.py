@@ -16,7 +16,7 @@ class Algo:
             pos2: tuple of (x, y) coordinates
             return: Euclidean distance between pos1 and pos2
         """
-        return ((pos1[0] - pos2[0])**2 + (pos1[1] - pos2[1])**2)**0.5
+        return ((pos1[0] - pos2[0])**2 + (pos1[1] - pos2[1]))**4
 
     @staticmethod
     def find_good_enough_trajectory(start, destination, agent_trajectories, ruble_grid, factory_grid, max_time_steps=100):
@@ -55,16 +55,23 @@ class Algo:
         # add start to visited
         visited[0].add(start)
 
+        # maintain the number of turns
+        turns = 0
+
         # worst case runtime of while loop : O(max_time_steps * 48^2 * log(48^2))
         # python heap pop and push is O(log n)
         while frontier:
             # pop the item with the lowest heuristic + cost
             _, cost, time, current, path = heapq.heappop(frontier)
 
-            print(f"Heuristic + cost = {_}, cost = {cost}")
+            # increment turns
+            turns += 1
+
+            # print(f"Heuristic + cost = {_}, cost = {cost}")
             # found the destination
             if current == destination:
-                return path, cost - time
+                print(f"Found destination after {turns} turns")
+                return path, cost
             
             # if time is greater than max_time_steps, we have exceeded the maximum time steps
             # in this case, we ignore the path
@@ -76,12 +83,12 @@ class Algo:
 
 
             # trying to move in 4 directions
-            print("Trying to move in 4 directions")
+            # print("Trying to move in 4 directions")
             for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
                 new_pos = (current[0] + dx, current[1] + dy)
                 # check if new_pos is a valid position and not visited and not filled with factory
                 if Algo.isValidPosition(new_pos) and new_pos not in visited[new_time] and not factory_grid[new_pos[0], new_pos[1]]:
-                    print(f"Time: {new_time}, old_pos: {current} new_pos: {new_pos}, occupiedPositions: {occupiedPositions[new_time]}")
+                    # print(f"Time: {new_time}, old_pos: {current} new_pos: {new_pos}, occupiedPositions: {occupiedPositions[new_time]}")
                     # add new_pos to visited
                     visited[new_time].add(new_pos)
                     # for each step taken, cost is linearly incremented
