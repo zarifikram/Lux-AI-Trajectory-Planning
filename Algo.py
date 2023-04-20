@@ -201,3 +201,37 @@ class Algo:
 
         # Display the animation
         return HTML(animation.to_jshtml())
+
+
+    @staticmethod
+    def padWithZeroIfOutOfBound(grid, center, xWidth, yWidth):
+        """
+        args:
+            grid: numpy array of the grid
+            center: tuple of (x, y) coordinates of the center of the grid
+            xWidth: number of cells to take on the left and right of the center
+            yWidth: number of cells to take on the top and bottom of the center
+        returns:
+            padded grid
+        """
+        x, y = center
+        xMin = max(y - xWidth, 0)
+        xMax = min(y + xWidth + 1, grid.shape[1])
+        yMin = max(x - yWidth, 0)
+        yMax = min(x + yWidth + 1, grid.shape[0])
+        gridBeforePadding =  grid[yMin:yMax, xMin:xMax]
+
+        # get a grid with proper dimensions
+        gridAfterPadding = np.zeros((2 * yWidth + 1, 2 * xWidth + 1))
+
+        # get the dimensions of the grid before padding
+        nRows, nCols = gridBeforePadding.shape
+
+        # get the starting indices for the grid before padding
+        xStart = max(0, yWidth - x)
+        yStart = max(0, xWidth - y)
+        # return (xStart, yStart)
+        # copy the grid before padding into the grid after padding using the starting indices
+        gridAfterPadding[xStart:xStart + nRows, yStart:yStart + nCols] = gridBeforePadding
+
+        return gridAfterPadding
